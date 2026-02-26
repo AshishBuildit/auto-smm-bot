@@ -1,0 +1,32 @@
+version: "3.9"
+
+# ── First-time setup on the VPS ─────────────────────────────────────────────
+# 1. Copy your secrets:      cp .env.example .env && nano .env
+# 2. Pre-create mount files: touch bot_data.db telethon_session.session
+# 3. Build & start:          docker compose up -d --build
+# 4. Watch logs (OTP prompt appears here on first auth):
+#                            docker compose logs -f bot
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  bot:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # Persist the SQLite database across container restarts
+      - ./bot_data.db:/app/bot_data.db
+      # Persist the Telethon session so re-auth is only needed once
+      - ./telethon_session.session:/app/telethon_session.session
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
