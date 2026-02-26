@@ -3,8 +3,10 @@ version: "3.9"
 # ── First-time setup on the VPS ─────────────────────────────────────────────
 # 1. Copy your secrets:      cp .env.example .env && nano .env
 # 2. Pre-create mount files: touch bot_data.db telethon_session.session
-# 3. Build & start:          docker compose up -d --build
-# 4. Watch logs (OTP prompt appears here on first auth):
+# 3. Fix ownership (container runs as uid 1000):
+#                            chown 1000:1000 bot_data.db telethon_session.session
+# 4. Build & start:          docker compose up -d --build
+# 5. Watch logs (OTP prompt appears here on first auth):
 #                            docker compose logs -f bot
 # ─────────────────────────────────────────────────────────────────────────────
 
